@@ -1,31 +1,21 @@
-// const { Sequelize } = require('sequelize');
-// const User = Sequelize.import("../models/user");
-const initModels = require("../models/init-models");
-const models = initModels(postgresConn);
-const commonService = require("./commons");
+const { Container } = require('typedi');
 
 module.exports = class AuthService {
     constructor() {
-        this.Commons = new commonService();
+        this.user = Container.get('user');
+        this.Commons = Container.get('CommonServiceInstance');
     }
+
     async signup(username, password) {
+        try {
+            // Salt hash password
+            password = await this.Commons.generatePasswordHash(password);
 
-        // Salt hash password
-        password = await this.Commons.generatePasswordHash(password);
-
-        let err = null;
-        let response = await models.User.sequelize
-            .transaction(async t => {
-                let user = await User.create({ username, password }, { transaction: t });
-                return user;
-            })
-            .catch(error => {
-                console.error(error);
-                err = error.message;
-            });
-        if (err) throw (err);
-        else
-            return response;
+            let response = await this.user.create({ username, password });
+            let output = { id: response.id, username: response.username };
+            return output;
+        } catch (error) {
+            throw error;
+        }
     }
-
 }
