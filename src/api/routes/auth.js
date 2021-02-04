@@ -22,4 +22,19 @@ module.exports = (app) => {
       }
     }
   );
+
+  route.post(
+    "/login",
+    // celebrate(validator.signup),
+    async (req, res, next) => {
+      try {
+        const { username, password } = req.body;
+        let AuthServiceInstance = Container.get('AuthServiceInstance');
+        let response = await AuthServiceInstance.login(username, password);
+        return res.json(response).status(200);
+      } catch (error) {
+        return next(error);
+      }
+    }
+  );
 };
