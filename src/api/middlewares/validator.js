@@ -1,8 +1,8 @@
-const { Joi } = require('celebrate');
+const { Joi, celebrate } = require('celebrate');
 
 module.exports = {
 
-  signup: {
+  auth: celebrate({
     body: Joi.object({
       username: Joi.string()
         .alphanum()
@@ -15,5 +15,5 @@ module.exports = {
         .required(),
     })
       .options({ stripUnknown: true })
-  }
+  })
 };

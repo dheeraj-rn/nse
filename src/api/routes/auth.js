@@ -1,7 +1,6 @@
 const { Router } = require('express');
 const { Container } = require('typedi');
-// const { celebrate } = require('celebrate');
-// const { validator } = require('../middlewares');
+const { validator } = require('../middlewares');
 
 const route = Router();
 
@@ -10,7 +9,7 @@ module.exports = (app) => {
 
   route.post(
     "/signup",
-    // celebrate(validator.signup),
+    validator.auth,
     async (req, res, next) => {
       try {
         const { username, password } = req.body;
@@ -25,7 +24,7 @@ module.exports = (app) => {
 
   route.post(
     "/login",
-    // celebrate(validator.signup),
+    validator.auth,
     async (req, res, next) => {
       try {
         const { username, password } = req.body;
