@@ -21,11 +21,11 @@ module.exports = {
       database: process.env.DB_NAME,
       host: process.env.DB_HOST,
       dialect: process.env.DB_DIALECT,
-      port: process.env.DB_PORT
-    }
+      port: process.env.DB_PORT,
+    },
   },
   env: {
     NODE_ENV: process.env.NODE_ENV,
-    jwt_secret: process.env.JWT_SECRET
-  }
+    jwt_secret: process.env.JWT_SECRET,
+  },
 };

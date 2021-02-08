@@ -14,6 +14,6 @@ module.exports = {
         .max(30)
         .required(),
     })
-      .options({ stripUnknown: true })
-  })
+      .options({ stripUnknown: true }),
+  }),
 };

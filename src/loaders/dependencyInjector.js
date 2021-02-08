@@ -4,10 +4,10 @@ const AuthService = require('../services/auth');
 const CommonService = require('../services/commons');
 const TokenService = require('../services/token');
 const NseService = require('../services/nse');
-module.exports = () => {
 
-  let db = Object.keys(models)
-  db.forEach(el => {
+module.exports = () => {
+  const db = Object.keys(models);
+  db.forEach((el) => {
     Container.set(el, models[el]);
   });
 

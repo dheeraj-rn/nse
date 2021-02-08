@@ -8,33 +8,33 @@ module.exports = (app) => {
   app.use('/auth', route);
 
   route.post(
-    "/signup",
+    '/signup',
     validator.auth,
     async (req, res, next) => {
       try {
         const { username, password } = req.body;
-        let AuthServiceInstance = Container.get('AuthServiceInstance');
-        let response = await AuthServiceInstance.signup(username, password);
+        const AuthServiceInstance = Container.get('AuthServiceInstance');
+        const response = await AuthServiceInstance.signup(username, password);
         return res.json(response).status(200);
       } catch (err) {
         return next(err);
       }
-    }
+    },
   );
 
   route.post(
-    "/login",
+    '/login',
     validator.auth,
     async (req, res, next) => {
       try {
         const { username, password } = req.body;
-        let AuthServiceInstance = Container.get('AuthServiceInstance');
-        let response = await AuthServiceInstance.login(username, password);
+        const AuthServiceInstance = Container.get('AuthServiceInstance');
+        const response = await AuthServiceInstance.login(username, password);
         return res.json(response).status(200);
       } catch (error) {
         return next(error);
       }
-    }
+    },
   );
 
   // route.get(
