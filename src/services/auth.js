@@ -1,5 +1,5 @@
 const { Container } = require('typedi');
-const createError = require('http-errors')
+const createError = require('http-errors');
 
 module.exports = class AuthService {
     constructor() {
