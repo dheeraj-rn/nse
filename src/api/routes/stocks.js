@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const { Container } = require('typedi');
+const { AuthValidator } = require('../middlewares');
 
 const route = Router();
 
@@ -8,6 +9,7 @@ module.exports = (app) => {
 
   route.get(
     '/',
+    AuthValidator.verifyToken,
     async (req, res, next) => {
       try {
         const StockServiceInstance = Container.get('StockServiceInstance');
