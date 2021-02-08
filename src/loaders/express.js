@@ -31,7 +31,7 @@ module.exports = (app) => {
   });
 
   app.use((err, req, res, next) => {
-    if (err.name === 'UnauthorizedError') {
+    if (err.name === 'unauthorized') {
       return res
         .status(err.status)
         .send({ message: err.message })
@@ -46,5 +46,6 @@ module.exports = (app) => {
         message: err.message,
       },
     });
+    return next(err);
   });
 };
