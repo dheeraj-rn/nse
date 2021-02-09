@@ -25,7 +25,7 @@ module.exports = class NseService {
   }
 
   async downloadZip(url) {
-    url = 'https://archives.nseindia.com/content/historical/EQUITIES/2021/FEB/cm05FEB2021bhav.csv.zip';
+    // url = 'https://archives.nseindia.com/content/historical/EQUITIES/2021/FEB/cm05FEB2021bhav.csv.zip';
     return new Promise(async (resolve, reject) => {
       try {
         const response = await Axios.get(
