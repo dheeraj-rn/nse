@@ -28,12 +28,13 @@ module.exports = {
       protocol: process.env.DB_DIALECT,
       dialectOptions: {
         ssl: true,
-        rejectUnauthorized: false
-      }
+        rejectUnauthorized: false,
+      },
     },
   },
   env: {
     NODE_ENV: process.env.NODE_ENV,
     jwt_secret: process.env.JWT_SECRET,
+    redis: process.env.REDIS_TLS_URL,
   },
 };

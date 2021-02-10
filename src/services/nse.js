@@ -10,6 +10,7 @@ module.exports = class NseService {
   constructor() {
     this.stocks = Container.get('stocks');
     this.downloadPath = Path.resolve('downloads');
+    this.RedisClient = Container.get('RedisClient');
   }
 
   async generateDownloadURL() {
@@ -83,6 +84,10 @@ module.exports = class NseService {
         stockPromise.push(dbdata);
       }
       const dbResponse = await Promise.all(stockPromise);
+      if (dbResponse) {
+        await this.RedisClient.flushall();
+        console.log('Flushing Redis');
+      }
       return null;
     } catch (err) {
       return null;
