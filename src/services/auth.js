@@ -1,31 +1,43 @@
-// const { Sequelize } = require('sequelize');
-// const User = Sequelize.import("../models/user");
-const initModels = require("../models/init-models");
-const models = initModels(postgresConn);
-const commonService = require("./commons");
+const { Container } = require('typedi');
+const createError = require('http-errors');
 
 module.exports = class AuthService {
-    constructor() {
-        this.Commons = new commonService();
+  constructor() {
+    this.user = Container.get('user');
+    this.Commons = Container.get('CommonServiceInstance');
+    this.TokenService = Container.get('TokenServiceInstance');
+  }
+
+  async signup(username, password) {
+    try {
+      // Salt hash password
+      password = await this.Commons.generatePasswordHash(password);
+
+      const response = await this.user.create({ username, password });
+      const output = { id: response.id, username: response.username };
+      return output;
+    } catch (error) {
+      throw error;
     }
-    async signup(username, password) {
+  }
 
-        // Salt hash password
-        password = await this.Commons.generatePasswordHash(password);
-
-        let err = null;
-        let response = await models.User.sequelize
-            .transaction(async t => {
-                let user = await User.create({ username, password }, { transaction: t });
-                return user;
-            })
-            .catch(error => {
-                console.error(error);
-                err = error.message;
-            });
-        if (err) throw (err);
-        else
-            return response;
+  async login(username, password) {
+    try {
+      const userInfo = await this.user.findOne({
+        where: { username },
+      });
+      if (!userInfo) {
+        throw createError(401, 'unauthorized');
+      }
+      if (await this.Commons.compareHashes(userInfo, password)) {
+        return {
+          data: await this.TokenService.createAndRegisterToken(userInfo),
+        };
+      } else {
+        throw createError(401, 'unauthorized');
+      }
+    } catch (error) {
+      throw error;
     }
-
-}
+  }
+};

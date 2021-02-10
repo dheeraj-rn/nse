@@ -1,4 +1,3 @@
-
 // const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -32,7 +31,7 @@ module.exports = (app) => {
   });
 
   app.use((err, req, res, next) => {
-    if (err.name === 'UnauthorizedError') {
+    if (err.name === 'unauthorized') {
       return res
         .status(err.status)
         .send({ message: err.message })
@@ -41,11 +40,12 @@ module.exports = (app) => {
     return next(err);
   });
   app.use((err, req, res, next) => {
-    res.status(err.status || 500);
+    res.status(err.status || 400);
     res.json({
       errors: {
         message: err.message,
       },
     });
+    return next(err);
   });
 };

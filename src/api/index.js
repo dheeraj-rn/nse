@@ -1,10 +1,10 @@
 const { Router } = require('express');
-const auth = require('./routes/auth.js');
-// cosnt torrentToMagnet =
+const auth = require('./routes/auth');
+const stocks = require('./routes/stocks');
 
-// guaranteed to get dependencies
 module.exports = () => {
   const app = Router();
   auth(app);
+  stocks(app);
   return app;
 };
