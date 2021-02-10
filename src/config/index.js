@@ -24,6 +24,12 @@ module.exports = {
     },
     production: {
       use_env_variable: process.env.DATABASE_URL,
+      dialect: process.env.DB_DIALECT,
+      protocol: process.env.DB_DIALECT,
+      dialectOptions: {
+        ssl: true,
+        rejectUnauthorized: false
+      }
     },
   },
   env: {
