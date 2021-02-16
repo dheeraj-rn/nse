@@ -111,12 +111,19 @@ module.exports = class NseService {
         TOTALTRADES: el.TOTALTRADES,
         ISIN: el.ISIN,
       }));
-      const stockPromise = [];
-      for (const stock of stocksInfo) {
-        const dbdata = this.stocks.upsert(stock);
-        stockPromise.push(dbdata);
+      const distinctStocksInfo = [];
+      const map = new Map();
+      for (const item of stocksInfo) {
+        if (!map.has(item.SYMBOL)) {
+          map.set(item.SYMBOL, true); // set any value to Map
+          distinctStocksInfo.push(item);
+        }
       }
-      const dbResponse = await Promise.all(stockPromise);
+      const dbResponse = await this.stocks.bulkCreate(distinctStocksInfo,
+        {
+          fields: Object.keys(distinctStocksInfo[0]),
+          updateOnDuplicate: ['SYMBOL'],
+        });
       if (dbResponse) {
         await this.RedisClient.flushall();
         console.log('Flushing Redis');
