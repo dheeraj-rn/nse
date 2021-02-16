@@ -4,6 +4,7 @@ const Fs = require('fs');
 const Path = require('path');
 const Axios = require('axios');
 const csv = require('csvtojson');
+const cheerio = require('cheerio');
 const extract = require('extract-zip');
 
 module.exports = class NseService {
@@ -56,15 +57,47 @@ module.exports = class NseService {
     }
   }
 
+  htmlParse(data) {
+    const $ = cheerio.load(data);
+    const newHtmlData = $('#content').html();
+    const $2 = cheerio.load(newHtmlData);
+    let rawData = [];
+    $2('td').each(function (i, e) {
+      rawData[i] = $(this).text().trim().includes('\n') ? $(this).text().trim().split('\n')
+        .map((el) => el.trim())
+        .join(' ') : $(this).text().trim();
+    });
+    rawData = rawData.filter((el) => el !== '');
+    const nseSymbolInfo = {};
+    for (let i = 0; i < rawData.length - 2; i += 3) {
+      nseSymbolInfo[rawData[i + 1].trim()] = rawData[i + 2].trim();
+    }
+    return nseSymbolInfo;
+  }
+
+  async scrap() {
+    const url = 'https://www1.nseindia.com/education/content/reports/eq_research_reports_listed.htm';
+    const response = await Axios.get(url);
+    const { data } = response;
+    const url2 = 'https://www1.nseindia.com/education/content/reports/eq_rrl_m2z.htm';
+    const response2 = await Axios.get(url2);
+    const data2 = response2.data;
+    const json1 = this.htmlParse(data);
+    const json2 = this.htmlParse(data2);
+    const finalOut = { ...json1, ...json2 };
+    return finalOut;
+  }
+
   async execute() {
     try {
       const downloadUrl = await this.generateDownloadURL();
       const zipPath = await this.downloadZip(downloadUrl);
       const csvPath = await this.extractZip(zipPath);
       const nseJsonData = await csv().fromFile(csvPath);
+      const symbolInfo = await this.scrap();
       const stocksInfo = nseJsonData.map((el) => ({
         SYMBOL: el.SYMBOL,
-        NAME: '',
+        NAME: symbolInfo[el.SYMBOL] ? symbolInfo[el.SYMBOL] : '',
         SERIES: el.SERIES,
         OPEN: el.OPEN,
         HIGH: el.HIGH,

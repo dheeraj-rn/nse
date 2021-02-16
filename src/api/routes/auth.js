@@ -36,18 +36,4 @@ module.exports = (app) => {
       }
     },
   );
-
-  // route.get(
-  //   "/test",
-  //   async (req, res, next) => {
-  //     try {
-  //       let AuthServiceInstance = Container.get('NseServiceInstance');
-  //       let response = await AuthServiceInstance.execute();
-  //       return res.json(response).status(200);
-  //     } catch (error) {
-  //       console.log(error);
-  //       return next(error);
-  //     }
-  //   }
-  // );
 };
