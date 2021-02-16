@@ -122,7 +122,7 @@ module.exports = class NseService {
       const dbResponse = await this.stocks.bulkCreate(distinctStocksInfo,
         {
           fields: Object.keys(distinctStocksInfo[0]),
-          updateOnDuplicate: ['SYMBOL'],
+          updateOnDuplicate: Object.keys(distinctStocksInfo[0]),
         });
       if (dbResponse) {
         await this.RedisClient.flushall();
