@@ -141,7 +141,8 @@ async function execute() {
         }
         return null;
     } catch (err) {
-        // console.log(err)
+        console.log(err.message);
+        console.log(err.response.data ? err.response.data : "");
         return null;
     }
 }
