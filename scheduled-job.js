@@ -13,6 +13,12 @@ DependencyInjectorLoader();
 let stocks = Container.get('stocks');
 let downloadPath = Path.resolve('downloads');
 let RedisClient = Container.get('RedisClient');
+const AxiosConfig = {
+    headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:85.0) Gecko/20100101 Firefox/85.0',
+        'Referer': 'https://www1.nseindia.com/education/content/reports/eq_research_reports_listed.htm'
+    }
+};
 
 async function generateDownloadURL() {
     try {
@@ -32,7 +38,10 @@ async function downloadZip(url) {
         try {
             const response = await Axios.get(
                 url,
-                { responseType: 'stream' },
+                {
+                    responseType: 'stream',
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:85.0) Gecko/20100101 Firefox/85.0',
+                },
             );
             const fileName = url.split('/').pop();
             const dir = Path.resolve(downloadPath, fileName);
@@ -77,10 +86,10 @@ function htmlParse(data) {
 
 async function scrap() {
     const url = 'https://www1.nseindia.com/education/content/reports/eq_research_reports_listed.htm';
-    const response = await Axios.get(url);
+    const response = await Axios.get(url, {}, AxiosConfig);
     const { data } = response;
     const url2 = 'https://www1.nseindia.com/education/content/reports/eq_rrl_m2z.htm';
-    const response2 = await Axios.get(url2);
+    const response2 = await Axios.get(url2, {}, AxiosConfig);
     const data2 = response2.data;
     const json1 = htmlParse(data);
     const json2 = htmlParse(data2);
