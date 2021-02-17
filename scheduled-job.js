@@ -51,6 +51,7 @@ async function downloadZip(url) {
                 resolve(dir);
             });
         } catch (error) {
+            console.log(error.response.data);
             reject(error);
         }
     });
