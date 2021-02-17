@@ -141,7 +141,7 @@ async function execute() {
         }
         return null;
     } catch (err) {
-        console.log(err)
+        // console.log(err)
         return null;
     }
 }
