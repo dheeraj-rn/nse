@@ -103,10 +103,15 @@ async function scrap() {
 async function execute() {
   try {
     const downloadUrl = await generateDownloadURL();
+    downloadUrl ? console.log('downloadUrl success') : "";
     const zipPath = await downloadZip(downloadUrl);
+    zipPath ? console.log('zipPath success') : "";
     const csvPath = await extractZip(zipPath);
+    csvPath ? console.log('csvPath success') : "";
     const nseJsonData = await csv().fromFile(csvPath);
+    nseJsonData ? console.log('nseJsonData success') : "";
     const symbolInfo = await scrap();
+    symbolInfo ? console.log('symbolInfo success') : "";
     const stocksInfo = nseJsonData.map((el) => ({
       SYMBOL: el.SYMBOL,
       NAME: symbolInfo[el.SYMBOL] ? symbolInfo[el.SYMBOL] : '',
@@ -123,6 +128,7 @@ async function execute() {
       TOTALTRADES: el.TOTALTRADES,
       ISIN: el.ISIN,
     }));
+    stocksInfo ? console.log('stocksInfo success') : "";
     const distinctStocksInfo = [];
     const map = new Map();
     for (const item of stocksInfo) {
