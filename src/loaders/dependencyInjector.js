@@ -6,6 +6,7 @@ const TokenService = require('../services/token');
 const NseService = require('../services/nse');
 const StockService = require('../services/stocks');
 const Redis = require('./redis');
+const config = require('../config');
 
 module.exports = () => {
   const db = Object.keys(models);
@@ -13,6 +14,7 @@ module.exports = () => {
     Container.set(el, models[el]);
   });
 
+  Container.set('AxiosProxy', config.proxy);
   Container.set('RedisClient', Redis());
   Container.set('TokenServiceInstance', new TokenService());
   Container.set('CommonServiceInstance', new CommonService());
