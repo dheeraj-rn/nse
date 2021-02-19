@@ -1,0 +1,2 @@
+# NSE Stocks API
+Code structure is based on [Bulletproof node.js project architecture](https://dev.to/santypk4/bulletproof-node-js-project-architecture-4epf) by Sam Quinn. Example github repository can be found here: [https://github.com/santiq/bulletproof-nodejs](https://github.com/santiq/bulletproof-nodejs)
