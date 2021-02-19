@@ -4,13 +4,14 @@ const Fs = require('fs');
 const Path = require('path');
 const Axios = require('axios');
 const csv = require('csvtojson');
-const cheerio = require('cheerio');
+// const cheerio = require('cheerio');
 const extract = require('extract-zip');
 const DependencyInjectorLoader = require('./src/loaders/dependencyInjector');
 
 DependencyInjectorLoader();
 
 const stocks = Container.get('stocks');
+const symbols = Container.get('symbols');
 const downloadPath = Path.resolve('downloads');
 const RedisClient = Container.get('RedisClient');
 const AxiosProxyConfig = Container.get('AxiosProxy');
@@ -69,34 +70,41 @@ async function extractZip(zipPath) {
   }
 }
 
-function htmlParse(data) {
-  const $ = cheerio.load(data);
-  const newHtmlData = $('#content').html();
-  const $2 = cheerio.load(newHtmlData);
-  let rawData = [];
-  $2('td').each(function (i, e) {
-    rawData[i] = $(this).text().trim().includes('\n') ? $(this).text().trim().split('\n')
-      .map((el) => el.trim())
-      .join(' ') : $(this).text().trim();
-  });
-  rawData = rawData.filter((el) => el !== '');
-  const nseSymbolInfo = {};
-  for (let i = 0; i < rawData.length - 2; i += 3) {
-    nseSymbolInfo[rawData[i + 1].trim()] = rawData[i + 2].trim();
-  }
-  return nseSymbolInfo;
-}
+// function htmlParse(data) {
+//   const $ = cheerio.load(data);
+//   const newHtmlData = $('#content').html();
+//   const $2 = cheerio.load(newHtmlData);
+//   let rawData = [];
+//   $2('td').each(function (i, e) {
+//     rawData[i] = $(this).text().trim().includes('\n') ? $(this).text().trim().split('\n')
+//       .map((el) => el.trim())
+//       .join(' ') : $(this).text().trim();
+//   });
+//   rawData = rawData.filter((el) => el !== '');
+//   const nseSymbolInfo = {};
+//   for (let i = 0; i < rawData.length - 2; i += 3) {
+//     nseSymbolInfo[rawData[i + 1].trim()] = rawData[i + 2].trim();
+//   }
+//   return nseSymbolInfo;
+// }
 
 async function scrap() {
-  const url = 'https://www1.nseindia.com/education/content/reports/eq_research_reports_listed.htm';
-  const response = await Axios.get(url, {}, AxiosConfig);
-  const { data } = response;
-  const url2 = 'https://www1.nseindia.com/education/content/reports/eq_rrl_m2z.htm';
-  const response2 = await Axios.get(url2, {}, AxiosConfig);
-  const data2 = response2.data;
-  const json1 = htmlParse(data);
-  const json2 = htmlParse(data2);
-  const finalOut = { ...json1, ...json2 };
+  // const url = 'https://www1.nseindia.com/education/content/reports/eq_research_reports_listed.htm';
+  // const response = await Axios.get(url, {}, AxiosConfig);
+  // const { data } = response;
+  // const url2 = 'https://www1.nseindia.com/education/content/reports/eq_rrl_m2z.htm';
+  // const response2 = await Axios.get(url2, {}, AxiosConfig);
+  // const data2 = response2.data;
+  // const json1 = htmlParse(data);
+  // const json2 = htmlParse(data2);
+  // const finalOut = { ...json1, ...json2 };
+  let symbolInfo = await symbols.findAll();
+  let finalOut = {};
+  if (symbolInfo.length > 0) {
+    symbolInfo.forEach(element => {
+      finalOut[element.SYMBOL] = element.NAME;
+    });
+  }
   return finalOut;
 }
 
