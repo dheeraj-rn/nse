@@ -36,17 +36,4 @@ module.exports = (app) => {
     },
   );
 
-  // API to populate data if cronjob fails
-  // route.get(
-  //   '/populate',
-  //   async (req, res, next) => {
-  //     try {
-  //       const AuthServiceInstance = Container.get('NseServiceInstance');
-  //       const response = await AuthServiceInstance.execute();
-  //       return res.json(response).status(200);
-  //     } catch (error) {
-  //       return next(error);
-  //     }
-  //   },
-  // );
 };
