@@ -38,7 +38,7 @@ async function generateDownloadURL() {
 }
 
 async function downloadZip(url) {
-  url = 'https://archives.nseindia.com/content/historical/EQUITIES/2021/FEB/cm18FEB2021bhav.csv.zip';
+  // url = 'https://archives.nseindia.com/content/historical/EQUITIES/2021/FEB/cm18FEB2021bhav.csv.zip';
   const fileName = url.split('/').pop();
   const dir = Path.resolve(downloadPath, fileName);
   return new Promise(async (resolve, reject) => {
