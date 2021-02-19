@@ -2,7 +2,8 @@ const { Container } = require('typedi');
 const moment = require('moment');
 const Fs = require('fs');
 const Path = require('path');
-const Axios = require('axios');
+// const Axios = require('axios');
+const request = require('request');
 const csv = require('csvtojson');
 // const cheerio = require('cheerio');
 const extract = require('extract-zip');
@@ -15,13 +16,14 @@ const symbols = Container.get('symbols');
 const downloadPath = Path.resolve('downloads');
 const RedisClient = Container.get('RedisClient');
 const AxiosProxyConfig = Container.get('AxiosProxy');
-const AxiosConfig = {
-  headers: {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:85.0) Gecko/20100101 Firefox/85.0',
-    Referer: 'https://www1.nseindia.com/education/content/reports/eq_research_reports_listed.htm',
-  },
-  proxy: AxiosProxyConfig,
-};
+const proxyRequest = request.defaults({ 'proxy': `http://${AxiosProxyConfig.host}:${AxiosProxyConfig.port}` });
+// const AxiosConfig = {
+//   headers: {
+//     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:85.0) Gecko/20100101 Firefox/85.0',
+//     Referer: 'https://www1.nseindia.com/education/content/reports/eq_research_reports_listed.htm',
+//   },
+//   proxy: AxiosProxyConfig,
+// };
 
 async function generateDownloadURL() {
   try {
@@ -37,22 +39,35 @@ async function generateDownloadURL() {
 
 async function downloadZip(url) {
   url = 'https://archives.nseindia.com/content/historical/EQUITIES/2021/FEB/cm16FEB2021bhav.csv.zip';
+  const fileName = url.split('/').pop();
+  const dir = Path.resolve(downloadPath, fileName);
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await Axios.get(
-        url,
-        {
-          responseType: 'stream',
-        },
-        AxiosConfig,
-      );
-      const fileName = url.split('/').pop();
-      const dir = Path.resolve(downloadPath, fileName);
-      response.data.pipe(Fs.createWriteStream(dir));
-      response.data.on('end', () => {
-        console.log(`${fileName}: Download Completed`);
+      // const response = await Axios.get(
+      //   url,
+      //   {
+      //     responseType: 'stream',
+      //   },
+      //   AxiosConfig,
+      // );
+      // const fileName = url.split('/').pop();
+      // const dir = Path.resolve(downloadPath, fileName);
+      // response.data.pipe(Fs.createWriteStream(dir));
+      // response.data.on('end', () => {
+      //   console.log(`${fileName}: Download Completed`);
+      //   resolve(dir);
+      // });
+      const download = (url, path, callback) => {
+        proxyRequest.head(url, (err, res, body) => {
+          proxyRequest(url)
+            .pipe(Fs.createWriteStream(path))
+            .on('close', callback)
+        })
+      }
+      download(url, dir, () => {
+        console.log(`✅${fileName}: Download Completed!`);
         resolve(dir);
-      });
+      })
     } catch (error) {
       console.log(error.response.data);
       reject(error);
