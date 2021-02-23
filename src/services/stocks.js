@@ -15,7 +15,11 @@ module.exports = class StockService {
         console.log('Serving From Redis');
         return response;
       } else {
-        const response = await this.stocks.findAll();
+        const response = await this.stocks.findAll({
+          order: [
+            ['updatedAt', 'DESC'],
+          ]
+        });
         this.RedisClient.set('AllShares', JSON.stringify(response));
         return response;
       }
